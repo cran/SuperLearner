@@ -1,6 +1,6 @@
 # V-fold Cross-validation wrapper for SuperLearner
 
-CV.SuperLearner <- function(Y, X, V = 20, family = gaussian(), SL.library, method = 'method.NNLS', id = NULL, verbose = FALSE, control = list(saveFitLibrary = FALSE), cvControl = list(), obsWeights = NULL, saveAll = TRUE, parallel = FALSE) {
+CV.SuperLearner <- function(Y, X, V = 20, family = gaussian(), SL.library, method = 'method.NNLS', id = NULL, verbose = FALSE, control = list(saveFitLibrary = FALSE), cvControl = list(), obsWeights = NULL, saveAll = TRUE, parallel = "seq") {
   call <- match.call()
   N <- dim(X)[1L]
   
@@ -55,11 +55,13 @@ CV.SuperLearner <- function(Y, X, V = 20, family = gaussian(), SL.library, metho
     
     fit.SL <- SuperLearner(Y = cvOutcome, X = cvLearn, newX = cvValid, family = family, SL.library = SL.library, method = method, id = cvId, verbose = verbose, control = control, cvControl = cvControl, obsWeights = cvObsWeights)
     
-    out <- list(cvAllSL = ifelse(saveAll, fit.SL, NULL), cvSL.predict = fit.SL$SL.predict, cvdiscreteSL.predict = fit.SL$library.predict[, which.min(fit.SL$cvRisk)], cvwhichDiscreteSL = names(which.min(fit.SL$cvRisk)), cvlibrary.predict = fit.SL$library.predict, cvcoef = fit.SL$coef)
+    out <- list(cvAllSL = if(saveAll) fit.SL, cvSL.predict = fit.SL$SL.predict, cvdiscreteSL.predict = fit.SL$library.predict[, which.min(fit.SL$cvRisk)], cvwhichDiscreteSL = names(which.min(fit.SL$cvRisk)), cvlibrary.predict = fit.SL$library.predict, cvcoef = fit.SL$coef)
     return(out)
   }
+  ## Why is CV.SuperLearner not saving the output from SuperLearner, only the call name?
+  ## if we add something like force() will this eval multiple times?
   
-  if(!parallel) {
+  if(parallel == "seq") {
     cvList <- lapply(folds, FUN = .crossValFun, Y = Y, dataX = X, family = family, SL.library = SL.library, method = method, id = id, obsWeights = obsWeights, verbose = verbose, control = control, cvControl = cvControl, saveAll = saveAll)
   } else if (parallel == 'multicore') {
     .SL.require('multicore')
@@ -67,7 +69,7 @@ CV.SuperLearner <- function(Y, X, V = 20, family = gaussian(), SL.library, metho
   } else if (inherits(parallel, 'cluster')) {
     cvList <- parLapply(parallel, x = folds, fun = .crossValFun, Y = Y, dataX = X, family = family, SL.library = SL.library, method = method, id = id, obsWeights = obsWeights, verbose = verbose, control = control, cvControl = cvControl, saveAll = saveAll)
   } else {
-    stop('parallel option was not recognized, use parallel = FALSE for sequential computation.')
+    stop('parallel option was not recognized, use parallel = "seq" for sequential computation.')
   }
   # check out Biobase::subListExtract to replace the lapply
   AllSL <- lapply(cvList, '[[', 'cvAllSL')
