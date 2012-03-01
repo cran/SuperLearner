@@ -11,8 +11,8 @@
 \alias{SL.caret.rpart}
 \alias{SL.cforest}
 \alias{predict.SL.cforest}
-\alias{SL.DSA}
-\alias{predict.SL.DSA}
+% \alias{SL.DSA}
+% \alias{predict.SL.DSA}
 \alias{SL.earth}
 \alias{predict.SL.earth}
 \alias{SL.gam}
@@ -39,6 +39,7 @@
 \alias{SL.randomForest}
 \alias{predict.SL.randomForest}
 \alias{SL.rpart}
+\alias{SL.rpartPrune}
 \alias{predict.SL.rpart}
 \alias{SL.step}
 \alias{predict.SL.step}
@@ -52,6 +53,8 @@
 \alias{predict.SL.glmnet}
 \alias{SL.ridge}
 \alias{predict.SL.ridge}
+\alias{SL.leekasso}
+\alias{predict.SL.leekasso}
 
 \title{
 Wrapper functions for prediction algorithms in SuperLearner

@@ -1,6 +1,28 @@
 # News for the SuperLearner package. #
 
 ---
+Version: 2.0-6
+Date: 2012-02-29
+
+* Added SL.leekasso (see http://simplystatistics.tumblr.com/post/18132467723/prediction-the-lasso-vs-just-using-the-top-10 for details)
+* fixed parallel argument in CV.SuperLearner. Now always a character variable, no longer accepts FALSE.
+* fixed SL.gam to call gam::gam.control in case the mgcv package is also loaded after gam.
+
+---
+Version: 2.0-5
+Date: 2011-10-12
+
+* Fixed bug in CV.SuperLearner not saving SuperLearner objects (watch out for ifelse() statements).
+* Added minbucket to SL.rpart.
+* Added SL.rpartPrune, a version of SL.rpart with built-in pruning.
+
+---
+Version: 2.0-4
+Date: 2011-10-01
+
+* Minor changes to Rd files to cut build and check time. Time intensive examples now wrapped in \dontrun for CRAN.
+
+---
 Version: 2.0-3
 Date: 2011-08-05
 
