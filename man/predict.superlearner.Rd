@@ -5,15 +5,14 @@
   Obtains predictions on a new data set from a SuperLearner fit.  May require the original data if one of the library algorithms uses the original data in its predict method.
 }
 \usage{
-\method{predict}{SuperLearner}(object, newdata, family, X = NULL, Y = NULL, ...)
+\method{predict}{SuperLearner}(object, newdata, X = NULL, Y = NULL, onlySL = FALSE, ...)
 }
 \arguments{
   \item{object}{ Fitted object from \code{SuperLearner} }
   \item{newdata}{ New X values for prediction }
-  \item{family}{ 
-  Currently allows \code{gaussian} or \code{binomial} to describe the error distribution}
   \item{X}{ Original data set used to fit \code{object} }
   \item{Y}{ Original outcome used to fit \code{object} }
+  \item{onlySL}{ Logical. If TRUE, only compute predictions for algorithms with non-zero coefficients in the super learner object. Default is FALSE (computes predictions for all algorithms in library).}
   \item{\dots}{ Additional arguments passed to the \code{predict.SL.*} functions }
 }
 \details{
