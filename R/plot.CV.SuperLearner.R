@@ -1,6 +1,7 @@
 plot.CV.SuperLearner <- function(x, package = "ggplot2", constant = qnorm(0.975), sort = TRUE, ...) {
   sumx <- summary(x, ...)
-  if(sort) sumx$Table$Algorithm <- reorder(sumx$Table$Algorithm, -sumx$Table$Ave)
+  # if(sort) sumx$Table$Algorithm <- stats:::reorder.default(sumx$Table$Algorithm, -sumx$Table$Ave)\
+	if(sort) sumx$Table$Algorithm <- reorder(sumx$Table$Algorithm, -sumx$Table$Ave)
   Mean <- sumx$Table$Ave
   se <- sumx$Table$se
   Lower <- Mean - constant*se
@@ -17,7 +18,7 @@ plot.CV.SuperLearner <- function(x, package = "ggplot2", constant = qnorm(0.975)
   } 
   if(package == "ggplot2") {
     .SL.require("ggplot2")
-    p <- ggplot(d, aes(x = X, y = Y, ymin = Lower, ymax = Upper)) + geom_pointrange() + coord_flip() + ylab("V-fold CV Risk Estimate") + xlab("Method")
+    p <- ggplot(d, aes_string(x = "X", y = "Y", ymin = "Lower", ymax = "Upper")) + geom_pointrange() + coord_flip() + ylab("V-fold CV Risk Estimate") + xlab("Method")
   }
   return(p)
 }
