@@ -247,10 +247,26 @@ testMC
 
 ## examples with snow
 library(parallel)
-cl <- makeCluster(2, type = "MPI") # can use different types here
+cl <- makeCluster(2, type = "PSOCK") # can use different types here
 clusterSetRNGStream(cl, iseed = 2343)
 testSNOW <- snowSuperLearner(cluster = cl, Y = Y, X = X, newX = newX,
   SL.library = SL.library, method = "method.NNLS")
+testSNOW
+stopCluster(cl)
+
+## snow example with user-generated wrappers
+# If you write your own wrappers and are using snowSuperLearner()
+# These new wrappers need to be added to the SuperLearner namespace and exported to the clusters
+# Using a simple example here, but can define any new SuperLearner wrapper
+my.SL.wrapper <- function(...) SL.glm(...)
+# assign function into SuperLearner namespace
+environment(my.SL.wrapper) <-asNamespace("SuperLearner")
+
+cl <- makeCluster(2, type = "PSOCK") # can use different types here
+clusterSetRNGStream(cl, iseed = 2343)
+clusterExport(cl, c("my.SL.wrapper"))  # copy the function to all clusters
+testSNOW <- snowSuperLearner(cluster = cl, Y = Y, X = X, newX = newX,
+  SL.library = c("SL.glm", "SL.mean", "my.SL.wrapper"), method = "method.NNLS")
 testSNOW
 stopCluster(cl)
 
@@ -261,7 +277,7 @@ replicate(5, system.time(SuperLearner(Y = Y, X = X, newX = newX,
 replicate(5, system.time(mcSuperLearner(Y = Y, X = X, newX = newX, 
   SL.library = SL.library, method = "method.NNLS")))
 
-cl <- makeCluster(2, type = 'MPI')
+cl <- makeCluster(2, type = 'PSOCK')
 replicate(5, system.time(snowSuperLearner(cl, Y = Y, X = X, newX = newX,
   SL.library = SL.library, method = "method.NNLS")))
 stopCluster(cl)
