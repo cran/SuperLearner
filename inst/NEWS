@@ -1,9 +1,24 @@
 # News for the SuperLearner package. #
 
+---
+Version: 2.0-15
+Date: 2014-07-16
+* Fixed check for method.AUC and family
+* Moved SL.bart over to SuperLearneExtra because BayesTree package no longer on CRAN
+
+---
+Version: 2.0-14
+Date: 2014-07-14
+* added method.AUC. Contributed by Erin Ledell
+
+---
+Version: 2.0-13
+Date: 2014-04-16
+* added the SampleSplitSuperLearner function to allow sample split validation instead of V-fold cross-validation
 
 ---
 Version: 2.0-11
-Date:
+Date: 2013-12-31
 * fixed package requirement in CV.SuperLearner from multicore to parallel
 * Fixed a conflict with the reorder function in plot.CV.SuperLearner (between the stats and gdata namespace)
 * Fixed a bug in SL.svm when family is binomial to grab the correct predicted probabilities (thanks to Jeremy Coyle)
@@ -13,6 +28,7 @@ Date:
 * Changed cluster example to use PSOCK instead of MPI in SuperLearner.Rd
 * removed the ":::" in plot.CV.SuperLearner
 * moved quadprog from depends to suggests as it is only called if the user uses method = "method.NNLS2" not the default.
+* Added method.CC_LS and method.CC_nloglik. These provide true convex combination optimization for the 2 loss functions. Contributed by Sam Lendle.
 
 ---
 Version: 2.0-9

@@ -4,6 +4,10 @@
 \alias{method.NNLS}
 \alias{method.NNLS2}
 \alias{method.NNloglik}
+\alias{method.CC_LS}
+\alias{method.CC_nloglik}
+\alias{method.AUC}
+
 
 \title{
 Method to estimate the coefficients for the super learner
@@ -18,11 +22,17 @@ write.method.template(file = "", ...)
 method.NNLS()
 method.NNLS2()
 method.NNloglik()
+method.CC_LS()
+method.CC_nloglik()
+method.AUC(optim_method = "Nelder-Mead")
 }
 
 \arguments{
   \item{file}{
 A connection, or a character string naming a file to print to. Passed to \code{\link{cat}}.
+}
+	\item{optim_method}{
+Passed to the \code{optim} call method. See \code{\link{optim}} for details.
 }
   \item{\dots}{
 Additional arguments passed to \code{\link{cat}}.

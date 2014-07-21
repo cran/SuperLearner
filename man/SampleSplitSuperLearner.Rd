@@ -1,17 +1,13 @@
-\name{SuperLearner}
-\alias{SuperLearner}
-\alias{mcSuperLearner}
-\alias{snowSuperLearner}
-\alias{print.SuperLearner}
-\alias{coef.SuperLearner}
+\name{SampleSplitSuperLearner}
+\alias{SampleSplitSuperLearner}
 
 \title{Super Learner Prediction Function}
-\description{A Prediction Function for the Super Learner.  The \code{SuperLearner} function takes a training set pair (X,Y) and returns the predicted values based on a validation set.}
+\description{A Prediction Function for the Super Learner.  The \code{SuperLearner} function takes a training set pair (X,Y) and returns the predicted values based on a validation set. SampleSplitSuperLearner uses sample split validation whereas SuperLearner uses V-fold cross-validation.}
 
 \usage{
-SuperLearner(Y, X, newX = NULL, family = gaussian(), SL.library, 
+SampleSplitSuperLearner(Y, X, newX = NULL, family = gaussian(), SL.library, 
   method = "method.NNLS", id = NULL, verbose = FALSE, 
-  control = list(), cvControl = list(), obsWeights = NULL)
+  control = list(), split = 0.8, obsWeights = NULL)
 }
 
 \arguments{
@@ -33,7 +29,7 @@ logical; TRUE for printing progress during the computation (helpful for debuggin
 Currently allows \code{gaussian} or \code{binomial} to describe the error distribution. Link function information will be ignored and should be contained in the method argument below.
 }
   \item{method}{
-A list (or a function to create a list) containing details on estimating the coefficients for the super learner and the model to combine the individual algorithms in the library. See \code{?method.template} for details.  Currently, the built in options are either "method.NNLS" (the default), "method.NNLS2", "method.NNloglik", "method.CC_LS", "method.CC_nloglik", or "method.AUC".  NNLS and NNLS2 are non-negative least squares based on the Lawson-Hanson algorithm and the dual method of Goldfarb and Idnani, respectively.  NNLS and NNLS2 will work for both gaussian and binomial outcomes.  NNloglik is a non-negative binomial likelihood maximization using the BFGS quasi-Newton optimization method. NN* methods are normalized so weights sum to one. CC_LS uses Goldfarb and Idnani's quadratic programming algorithm to calculate the best convex combination of weights to minimize the squared error loss. CC_nloglik calculates the convex combination of weights that minimize the negative binomial log likelihood on the logistic scale using the sequential quadratic programming algorithm.  AUC, which only works for binary outcomes, uses the Nelder-Mead method via the optim function to minimize rank loss (equivalent to maximizing AUC).
+A list (or a function to create a list) containing details on estimating the coefficients for the super learner and the model to combine the individual algorithms in the library. See \code{?method.template} for details.  Currently, the built in options are either "method.NNLS" (the default), "method.NNLS2", "method.NNloglik", "method.CC_LS", or "method.CC_nloglik".  NNLS and NNLS2 are non-negative least squares based on the Lawson-Hanson algorithm and the dual method of Goldfarb and Idnani, respectively.  NNLS and NNLS2 will work for both gaussian and binomial outcomes.  NNloglik is a non-negative binomial likelihood maximization using the BFGS quasi-Newton optimization method. NN* methods are normalized so weights sum to one. CC_LS uses Goldfarb and Idnani's quadratic programming algorithm to calculate the best convex combination of weights to minimize the squared error loss. CC_nloglik calculates the convex combination of weights that minimize the negative binomial log likelihood on the logistic scale using the sequential quadratic programming algorithm. 
 }
   \item{id}{
 Optional cluster identification variable. For the cross-validation splits, \code{id} forces observations in the same cluster to be in the same validation fold. \code{id} is passed to the prediction and screening algorithms in SL.library, but be sure to check the individual wrappers as many of them ignore the information.
@@ -44,8 +40,8 @@ Optional observation weights variable. As with \code{id} above, \code{obsWeights
   \item{control}{
 A list of parameters to control the estimation process. Parameters include \code{saveFitLibrary} and \code{trimLogit}. See \code{\link{SuperLearner.control}} for details.
 }
-  \item{cvControl}{
-A list of parameters to control the cross-validation process. Parameters include \code{V}, \code{stratifyCV}, \code{shuffle} and \code{validRows}. See \code{\link{SuperLearner.CV.control}} for details.
+  \item{split}{
+Either a single value between 0 and 1 indicating the fraction of the samples for the training split. A value of 0.8 will randomly assign 80 percent of the samples to the training split and the other 20 percent to the validation split. Alternatively, split can be a numeric vector with the row numbers of \code{X} corresponding to the validation split. All other rows not in the vector will be considered in the training split.
 }
 }
 
@@ -102,8 +98,8 @@ A logical matrix indicating which variables passed each screening algorithm.
   \item{control}{
 The \code{control} list.
 }
-  \item{cvControl}{
-The \code{cvControl} list.
+  \item{split}{
+The \code{split} value.
 }
   \item{errorsInCVLibrary}{
 A logical vector indicating if any algorithms experienced an error within the CV step.
@@ -141,7 +137,7 @@ newY <- newX[, 1] + sqrt(abs(newX[, 2] * newX[, 3])) + newX[, 2] -
 # generate Library and run Super Learner
 SL.library <- c("SL.glm", "SL.randomForest", "SL.gam",
   "SL.polymars", "SL.mean")
-test <- SuperLearner(Y = Y, X = X, newX = newX, SL.library = SL.library,
+test <- SampleSplitSuperLearner(Y = Y, X = X, newX = newX, SL.library = SL.library,
   verbose = TRUE, method = "method.NNLS")
 test
 
@@ -163,130 +159,9 @@ Y <- rbinom(N, 1, plogis(.2*X[, 1] + .1*X[, 2] - .2*X[, 3] +
 SL.library <- c("SL.glmnet", "SL.glm", "SL.knn", "SL.gam", "SL.mean")
 
 # least squares loss function
-test.NNLS <- SuperLearner(Y = Y, X = X, SL.library = SL.library, 
+test.NNLS <- SampleSplitSuperLearner(Y = Y, X = X, SL.library = SL.library, 
   verbose = TRUE, method = "method.NNLS", family = binomial())
 test.NNLS
-
-# negative log binomial likelihood loss function
-test.NNloglik <- SuperLearner(Y = Y, X = X, SL.library = SL.library,
-  verbose = TRUE, method = "method.NNloglik", family = binomial())
-test.NNloglik
-
-# 1 - AUC loss function
-test.AUC <- SuperLearner(Y = Y, X = X, SL.library = SL.library,
-  verbose = TRUE, method = "method.AUC", family = binomial())
-test.AUC
-
-# 2
-# adapted from library(SIS)
-set.seed(1)
-# training
-b <- c(2, 2, 2, -3*sqrt(2))
-n <- 150
-p <- 200
-truerho <- 0.5
-corrmat <- diag(rep(1-truerho, p)) + matrix(truerho, p, p)
-corrmat[, 4] = sqrt(truerho)
-corrmat[4, ] = sqrt(truerho)
-corrmat[4, 4] = 1
-cholmat <- chol(corrmat)
-x <- matrix(rnorm(n*p, mean=0, sd=1), n, p)
-x <- x %*% cholmat
-feta <- x[, 1:4] %*% b
-fprob <- exp(feta) / (1 + exp(feta))
-y <- rbinom(n, 1, fprob)
-
-# test
-m <- 10000
-newx <- matrix(rnorm(m*p, mean=0, sd=1), m, p)
-newx <- newx %*% cholmat
-newfeta <- newx[, 1:4] %*% b
-newfprob <- exp(newfeta) / (1 + exp(newfeta))
-newy <- rbinom(m, 1, newfprob)
-
-DATA2 <- data.frame(Y = y, X = x)
-newDATA2 <- data.frame(Y = newy, X=newx)
-
-create.SL.knn <- function(k = c(20, 30)) {
-  for(mm in seq(length(k))){
-    eval(parse(text = paste('SL.knn.', k[mm], '<- function(..., k = ', k[mm],
-      ') SL.knn(..., k = k)', sep = '')), envir = .GlobalEnv)
-  }
-  invisible(TRUE)
-}
-create.SL.knn(c(20, 30, 40, 50, 60, 70))
-
-# library with screening
-SL.library <- list(c("SL.glmnet", "All"), c("SL.glm", "screen.randomForest"),
-  "SL.randomForest", "SL.knn", "SL.knn.20", "SL.knn.30", "SL.knn.40",
-  "SL.knn.50", "SL.knn.60", "SL.knn.70", 
-  c("SL.polymars", "screen.randomForest"))
-test <- SuperLearner(Y = DATA2$Y, X = DATA2[, -1], newX = newDATA2[, -1],
-  SL.library = SL.library, verbose = TRUE, family = binomial())
-test
-
-## examples with multicore
-set.seed(23432)
-## training set
-n <- 500
-p <- 50
-X <- matrix(rnorm(n*p), nrow = n, ncol = p)
-colnames(X) <- paste("X", 1:p, sep="")
-X <- data.frame(X)
-Y <- X[, 1] + sqrt(abs(X[, 2] * X[, 3])) + X[, 2] - X[, 3] + rnorm(n)
-
-## test set
-m <- 1000
-newX <- matrix(rnorm(m*p), nrow = m, ncol = p)
-colnames(newX) <- paste("X", 1:p, sep="")
-newX <- data.frame(newX)
-newY <- newX[, 1] + sqrt(abs(newX[, 2] * newX[, 3])) + newX[, 2] - newX[, 3] + rnorm(m)
-
-# generate Library and run Super Learner
-SL.library <- c("SL.glm", "SL.randomForest", "SL.gam", 
-  "SL.polymars", "SL.mean")
-
-testMC <- mcSuperLearner(Y = Y, X = X, newX = newX, SL.library = SL.library,
-  method = "method.NNLS")
-testMC
-
-## examples with snow
-library(parallel)
-cl <- makeCluster(2, type = "PSOCK") # can use different types here
-clusterSetRNGStream(cl, iseed = 2343)
-testSNOW <- snowSuperLearner(cluster = cl, Y = Y, X = X, newX = newX,
-  SL.library = SL.library, method = "method.NNLS")
-testSNOW
-stopCluster(cl)
-
-## snow example with user-generated wrappers
-# If you write your own wrappers and are using snowSuperLearner()
-# These new wrappers need to be added to the SuperLearner namespace and exported to the clusters
-# Using a simple example here, but can define any new SuperLearner wrapper
-my.SL.wrapper <- function(...) SL.glm(...)
-# assign function into SuperLearner namespace
-environment(my.SL.wrapper) <-asNamespace("SuperLearner")
-
-cl <- makeCluster(2, type = "PSOCK") # can use different types here
-clusterSetRNGStream(cl, iseed = 2343)
-clusterExport(cl, c("my.SL.wrapper"))  # copy the function to all clusters
-testSNOW <- snowSuperLearner(cluster = cl, Y = Y, X = X, newX = newX,
-  SL.library = c("SL.glm", "SL.mean", "my.SL.wrapper"), method = "method.NNLS")
-testSNOW
-stopCluster(cl)
-
-## timing
-replicate(5, system.time(SuperLearner(Y = Y, X = X, newX = newX, 
-  SL.library = SL.library, method = "method.NNLS")))
-
-replicate(5, system.time(mcSuperLearner(Y = Y, X = X, newX = newX, 
-  SL.library = SL.library, method = "method.NNLS")))
-
-cl <- makeCluster(2, type = 'PSOCK')
-replicate(5, system.time(snowSuperLearner(cl, Y = Y, X = X, newX = newX,
-  SL.library = SL.library, method = "method.NNLS")))
-stopCluster(cl)
-
 }
 }
 \keyword{models}
