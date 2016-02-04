@@ -82,7 +82,7 @@ method.NNLS2 <- function() {
     	d <- t(t(wY) %*% wX)
     	A <- diag(ncol(wX))
     	b <- rep(0, ncol(wX))
-    	fit <- solve.QP(Dmat = D, dvec = d, Amat = t(A), bvec = b, meq=0)
+    	fit <- quadprog::solve.QP(Dmat = D, dvec = d, Amat = t(A), bvec = b, meq=0)
     	invisible(fit)
     }
     fit.nnls <- .NNLS(x = Z, y = Y, wt = obsWeights)
@@ -170,7 +170,7 @@ method.CC_LS <- function() {
       d <- crossprod(wX, wY)
       A <- cbind(rep(1, ncol(wX)), diag(ncol(wX)))
       bvec <- c(1, rep(0, ncol(wX)))
-      fit <- solve.QP(Dmat=D, dvec=d, Amat=A, bvec=bvec, meq=1)
+      fit <- quadprog::solve.QP(Dmat=D, dvec=d, Amat=A, bvec=bvec, meq=1)
       invisible(fit)
     }
     fit <- compute(x = Z, y = Y, wt = obsWeights)
@@ -186,7 +186,9 @@ method.CC_LS <- function() {
   computePred = function(predY, coef, ...) {
    predY %*% matrix(coef)
   }
-
+  #set very small coefficients to 0 and renormalize
+  coef[coef < 1.0e-4] <- 0
+  coef <- coef/sum(coef)
   out <- list(require = "quadprog",
               computeCoef=computeCoef,
               computePred=computePred)
@@ -199,39 +201,44 @@ method.CC_nloglik <- function() {
     plogis(trimLogit(predY, trim = control$trimLogit) %*% matrix(coef))
   }
   computeCoef = function(Z, Y, libraryNames, obsWeights, control, verbose, ...) {
-    cvRisk <- apply(Z, 2, function(x) { -sum(2 * obsWeights * ifelse(Y, log(x), log(1-x))) } )
+    logitZ = trimLogit(Z, control$trimLogit)
+    cvRisk <- apply(logitZ, 2, function(x) -sum(2 * obsWeights *
+                                       ifelse(Y, plogis(x, log.p=TRUE),
+                                                 plogis(x, log.p=TRUE, lower.tail=FALSE))))
     names(cvRisk) <- libraryNames
     obj_and_grad <- function(y,x, w=NULL) {
         y <- y
         x <- x
       function(beta) {
-        xB <- x %*% cbind(beta) 
+        xB <- x %*% cbind(beta)
         loglik <- y * plogis(xB, log.p=TRUE) + (1-y) * plogis(xB, log.p=TRUE, lower.tail=FALSE)
         if (!is.null(w)) loglik <- loglik * w
         obj <- -2 * sum(loglik)
-
         p <- plogis(xB)
         grad <- if (is.null(w)) 2 * crossprod(x, cbind(p - y))
         else 2 * crossprod(x, w*cbind(p - y))
         list(objective=obj, gradient=grad)
       }
-    }    
+    }
 
-    r <- nloptr(x0=rep(1/ncol(Z), ncol(Z)),
-            eval_f=obj_and_grad(Y, Z),
+    r <- nloptr::nloptr(x0=rep(1/ncol(Z), ncol(Z)),
+            eval_f=obj_and_grad(Y, logitZ),
             lb=rep(0, ncol(Z)),
             ub=rep(1, ncol(Z)),
             eval_g_eq = function(beta) (sum(beta)-1),
             eval_jac_g_eq = function(beta) rep(1, length(beta)),
-            opts=list("algorithm"="NLOPT_LD_SLSQP","ftol_rel"=1.0e-8))
-    if (r$status < 1 || r$status > 4) { 
-      warning(r$messate)
+            opts=list("algorithm"="NLOPT_LD_SLSQP","xtol_abs"=1.0e-8))
+    if (r$status < 1 || r$status > 4) {
+      warning(r$message)
     }
     coef <- r$solution
     if (any(is.na(coef))) {
       warning("Some algorithms have weights of NA, setting to 0.")
       coef[is.na(coef)] <- 0
     }
+    #set very small coefficients to 0 and renormalize
+    coef[coef < 1.0e-4] <- 0
+    coef <- coef/sum(coef)
     out <- list(cvRisk = cvRisk, coef = coef)
     return(out)
   }
@@ -250,7 +257,7 @@ method.AUC <- function(optim_method="Nelder-Mead") {
 				# This is the loss function that gets fed into optim as the "fn" argument 
 				# par is the weight/coef vector for the ensemble in Super Learner
 				predictions <- crossprod(t(Z), par)  #cv predicted SL values
-				cvRisk <- 1 - cvAUC(predictions=predictions, labels=Y, folds=folds)$cvAUC
+				cvRisk <- 1 - cvAUC::cvAUC(predictions=predictions, labels=Y, folds=folds)$cvAUC
 				return(cvRisk)
 			}
 			coef_init <- rep(1/ncol(Z),ncol(Z))
@@ -258,7 +265,7 @@ method.AUC <- function(optim_method="Nelder-Mead") {
 			# optim function selects the value for par that minimizes cvRisk_AUC (aka Rank Loss)
 			res <- optim(par=coef_init, fn=.cvRisk_AUC, Z=Z, Y=Y, folds=NULL, method=optim_method)
 			coef <- res$par
-			auc <- apply(Z, 2, function(x) cvAUC(x, labels=Y)$cvAUC)
+			auc <- apply(Z, 2, function(x) cvAUC::cvAUC(x, labels=Y)$cvAUC)
 			cvRisk <- 1 - auc  # Rank Loss
 			names(coef) <- libraryNames
 			out <- list(cvRisk = cvRisk, coef = coef)

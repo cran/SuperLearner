@@ -37,12 +37,12 @@ summary.CV.SuperLearner <- function(object, obsWeights = NULL, ...) {
 		}
 		se <- rep.int(NA, (length(library.names) + 2))
 	} else if (method %in% c("method.AUC")) {
-		require("cvAUC") # make sure cvAUC loaded
-		require("ROCR")
+		requireNamespace("cvAUC") # make sure cvAUC loaded
+		# require("ROCR") # cvAUC will load ROCR
 		for (ii in seq_len(V)) {
-			Risk.SL[ii] <- cvAUC(predictions = SL.predict[folds[[ii]]], labels = Y[folds[[ii]]], folds = NULL)$cvAUC
-			Risk.dSL[ii] <- cvAUC(predictions = discreteSL.predict[folds[[ii]]], labels = Y[folds[[ii]]], folds = NULL)$cvAUC
-			Risk.library[, ii] <- apply(library.predict[folds[[ii]], , drop = FALSE], 2, function(x) cvAUC(predictions = x, labels = Y[folds[[ii]]], folds = NULL)$cvAUC)
+			Risk.SL[ii] <- cvAUC::cvAUC(predictions = SL.predict[folds[[ii]]], labels = Y[folds[[ii]]], folds = NULL)$cvAUC
+			Risk.dSL[ii] <- cvAUC::cvAUC(predictions = discreteSL.predict[folds[[ii]]], labels = Y[folds[[ii]]], folds = NULL)$cvAUC
+			Risk.library[, ii] <- apply(library.predict[folds[[ii]], , drop = FALSE], 2, function(x) cvAUC::cvAUC(predictions = x, labels = Y[folds[[ii]]], folds = NULL)$cvAUC)
 		}
 		se <- rep.int(NA, (length(library.names) + 2)) # no se right now?
 		} else {
@@ -60,7 +60,7 @@ print.summary.CV.SuperLearner <- function(x, digits = max(2, getOption("digits")
 	cat("Risk is based on: ")
 	if(x$method %in% c("method.NNLS", "method.NNLS2", "method.CC_LS")) {
 		cat("Mean Squared Error")
-	} else if (x$method %in% c("method.NNLS", "method.CC_nloglik")) {
+	} else if (x$method %in% c("method.NNloglik", "method.CC_nloglik")) {
 		cat("Negative Log Likelihood (-2*log(L))")
 	} else if (x$method %in% c("method.AUC")) {
 		cat("Area under ROC curve (AUC)")
