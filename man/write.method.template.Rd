@@ -24,16 +24,25 @@ method.NNLS2()
 method.NNloglik()
 method.CC_LS()
 method.CC_nloglik()
-method.AUC(optim_method = "Nelder-Mead")
+method.AUC(nlopt_method=NULL, optim_method="L-BFGS-B", bounds=c(0, Inf), normalize=TRUE)
 }
 
 \arguments{
   \item{file}{
 A connection, or a character string naming a file to print to. Passed to \code{\link{cat}}.
 }
-	\item{optim_method}{
+  \item{optim_method}{
 Passed to the \code{optim} call method. See \code{\link{optim}} for details.
 }
+  \item{nlopt_method}{
+  Either \code{optim_method} or \code{nlopt_method} must be provided, the other must be \code{NULL}
+}
+  \item{bounds}{
+  Bounds for parameter estimates
+}
+  \item{normalize}{
+  Logical. Should the parameters be normalized to sum up to 1
+}  
   \item{\dots}{
 Additional arguments passed to \code{\link{cat}}.
 }
@@ -56,7 +65,7 @@ A function. The arguments are: \code{predY}, \code{coef}, \code{control}. The va
 }
 }
 
-\author{ Eric C Polley \email{eric.polley@nih.gov} }
+\author{ Eric C Polley \email{Polley.Eric@mayo.edu} }
 \seealso{
 \code{\link{SuperLearner}}
 }
