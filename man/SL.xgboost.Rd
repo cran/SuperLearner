@@ -6,7 +6,7 @@
 \usage{
 SL.xgboost(Y, X, newX, family, obsWeights, id, ntrees = 1000, max_depth = 4,
   shrinkage = 0.1, minobspernode = 10, params = list(), nthread = 1,
-  verbose = 0, ...)
+  verbose = 0, save_period = NULL, ...)
 }
 \arguments{
 \item{Y}{Outcome variable}
@@ -44,6 +44,10 @@ parallelization.}
 
 \item{verbose}{Verbosity of XGB fitting.}
 
+\item{save_period}{How often (in tree iterations) to save current model to
+disk during processing. If NULL does not save model, and if 0 saves model
+at the end.}
+
 \item{...}{Any remaining arguments (not supported though).}
 }
 \description{
@@ -58,6 +62,5 @@ on cross-validated performance.
 
 If you run into errors please first try installing the latest version of
 XGBoost from drat as described here:
-https://github.com/dmlc/xgboost/blob/master/doc/build.md#r-package-installation
+\url{https://github.com/dmlc/xgboost/blob/master/doc/build.md#r-package-installation}
 }
-

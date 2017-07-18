@@ -19,8 +19,6 @@
 \alias{predict.SL.gam}
 \alias{SL.gbm}
 \alias{predict.SL.gbm}
-\alias{SL.glm}
-\alias{predict.SL.glm}
 \alias{SL.glm.interaction}
 \alias{SL.ipredbagg}
 \alias{predict.SL.ipredbagg}
@@ -49,8 +47,6 @@
 \alias{predict.SL.stepAIC}
 \alias{SL.svm}
 \alias{predict.SL.svm}
-\alias{SL.glmnet}
-\alias{predict.SL.glmnet}
 \alias{SL.ridge}
 \alias{predict.SL.ridge}
 \alias{SL.leekasso}
@@ -89,7 +85,7 @@ A list. Contains all objects necessary to get predictions for new observations f
 }
 }
 
-\author{ Eric C Polley \email{eric.polley@nih.gov} }
+\author{ Eric C Polley \email{polley.eric@mayo.edu} }
 
 
 \seealso{

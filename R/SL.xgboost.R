@@ -10,7 +10,7 @@
 #'
 #' If you run into errors please first try installing the latest version of
 #' XGBoost from drat as described here:
-#' https://github.com/dmlc/xgboost/blob/master/doc/build.md#r-package-installation
+#' \url{https://github.com/dmlc/xgboost/blob/master/doc/build.md#r-package-installation}
 #'
 #' @param Y Outcome variable
 #' @param X Covariate dataframe
@@ -33,38 +33,60 @@
 #' @param nthread How many threads (cores) should xgboost use. Generally we want
 #'   to keep this to 1 so that XGBoost does not compete with SuperLearner
 #'   parallelization.
+#' @param save_period How often (in tree iterations) to save current model to
+#'   disk during processing. If NULL does not save model, and if 0 saves model
+#'   at the end.
 #' @param verbose Verbosity of XGB fitting.
 #' @param ... Any remaining arguments (not supported though).
 #'
 #' @export
 SL.xgboost = function(Y, X, newX, family, obsWeights, id, ntrees = 1000,
-                      max_depth=4, shrinkage=0.1, minobspernode=10, params = list(),
-                      nthread = 1, verbose = 0,
+                      max_depth = 4, shrinkage = 0.1, minobspernode = 10,
+                      params = list(),
+                      nthread = 1,
+                      verbose = 0,
+                      save_period = NULL,
                       ...) {
   .SL.require("xgboost")
+  if(packageVersion("xgboost") < 0.6) stop("SL.xgboost requires xgboost version >= 0.6, try help(\'SL.xgboost\') for details")
+  # X needs to be converted to a matrix first, then an xgb.DMatrix.
+  if (!is.matrix(X)) {
+    X = model.matrix(~ . - 1, X)
+  }
 
   # Convert to an xgboost compatible data matrix, using the sample weights.
-  xgmat = xgboost::xgb.DMatrix(data=as.matrix(X), label=Y, weight = obsWeights)
+  xgmat = xgboost::xgb.DMatrix(data = X, label = Y, weight = obsWeights)
 
   # TODO: support early stopping, which requires a "watchlist". See ?xgb.train
 
   if (family$family == "gaussian") {
-    model = xgboost::xgboost(data=xgmat, objective="reg:linear", nround = ntrees,
-                max_depth = max_depth, minchildweight = minobspernode, eta = shrinkage, verbose=verbose,
-                nthread = nthread, params = params)
+    model = xgboost::xgboost(data = xgmat, objective="reg:linear", nrounds = ntrees,
+                max_depth = max_depth, min_child_weight = minobspernode, eta = shrinkage,
+                verbose = verbose, nthread = nthread, params = params,
+                save_period = save_period)
   }
   if (family$family == "binomial") {
-    model = xgboost::xgboost(data=xgmat, objective="binary:logistic", nround = ntrees,
-                max_depth = max_depth, minchildweight = minobspernode, eta = shrinkage, verbose=verbose,
-                nthread = nthread, params = params)
+    model = xgboost::xgboost(data = xgmat, objective="binary:logistic", nrounds = ntrees,
+                max_depth = max_depth, min_child_weight = minobspernode, eta = shrinkage,
+                verbose = verbose, nthread = nthread, params = params,
+                save_period = save_period)
   }
   if (family$family == "multinomial") {
     # TODO: test this.
-    model = xgboost::xgboost(data=xgmat, objective="multi:softmax", nround = ntrees,
-                max_depth = max_depth, minchildweight = minobspernode, eta = shrinkage, verbose=verbose,
-                num_class=length(unique(Y)), nthread = nthread, params = params)
+    model = xgboost::xgboost(data = xgmat, objective="multi:softmax", nrounds = ntrees,
+                max_depth = max_depth, min_child_weight = minobspernode, eta = shrinkage,
+                verbose = verbose, num_class = length(unique(Y)), nthread = nthread,
+                params = params,
+                save_period = save_period)
   }
-  pred = predict(model, newdata=data.matrix(newX))
+
+  # Newdata needs to be converted to a matrix first, then an xgb.DMatrix.
+  if (!is.matrix(newX)) {
+    newX = model.matrix(~ . - 1, newX)
+  }
+
+  pred = predict(model, newdata = newX)
+
   fit = list(object = model)
   class(fit) = c("SL.xgboost")
   out = list(pred = pred, fit = fit)
@@ -78,7 +100,12 @@ SL.xgboost = function(Y, X, newX, family, obsWeights, id, ntrees = 1000,
 #' @param ... Any remaining arguments (not supported though).
 predict.SL.xgboost <- function(object, newdata, family, ...) {
   .SL.require("xgboost")
-  pred <- predict(object$object, xgboost::xgb.DMatrix(newdata))
+  if(packageVersion("xgboost") < 0.6) stop("SL.xgboost requires xgboost version >= 0.6, try help(\'SL.xgboost\') for details")
+  # newdata needs to be converted to a matrix first
+  if (!is.matrix(newdata)) {
+    newdata = model.matrix(~ . - 1, newdata)
+  }
+  pred = predict(object$object, newdata = newdata)
   return(pred)
 }
 
