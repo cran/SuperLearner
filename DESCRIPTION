@@ -1,8 +1,8 @@
 Package: SuperLearner
 Type: Package
 Title: Super Learner Prediction
-Version: 2.0-22
-Date: 2017-07-18
+Version: 2.0-23
+Date: 2018-03-09
 Authors@R: c(person("Eric", "Polley", email = "polley.eric@mayo.edu", role = c("aut", "cre")), person("Erin", "LeDell", role = c("aut")), person("Chris", "Kennedy", role = c("aut")), person("Sam", "Lendle", role = c("ctb")), person("Mark", "van der Laan", role = c("aut", "ths")))
 Maintainer: Eric Polley <polley.eric@mayo.edu>
 Description: Implements the super learner prediction method and contains a
@@ -12,21 +12,21 @@ URL: https://github.com/ecpolley/SuperLearner
 Depends: R (>= 2.14.0), nnls
 Imports: cvAUC
 Suggests: arm, bartMachine, biglasso, bigmemory, caret, class, dbarts,
-        devtools, e1071, earth, extraTrees, gam, gbm, genefilter,
-        ggplot2, glmnet, Hmisc, ipred, KernelKnn, kernlab, knitr,
-        lattice, LogicReg, MASS, mda, mlbench, nloptr, nnet, party,
+        devtools, e1071, earth, extraTrees, gam (>= 1.15), gbm,
+        genefilter, ggplot2, glmnet, ipred, KernelKnn, kernlab, knitr,
+        lattice, LogicReg, MASS, mlbench, nloptr, nnet, party,
         polspline, prettydoc, quadprog, randomForest, ranger,
-        RhpcBLASctl, ROCR, rmarkdown, rpart, SIS, speedglm, spls,
-        stepPlr, sva, testthat, xgboost (>= 0.6)
+        RhpcBLASctl, ROCR, rmarkdown, rpart, SIS, speedglm, spls, sva,
+        testthat, xgboost (>= 0.6)
 LazyLoad: yes
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
 NeedsCompilation: no
-Packaged: 2017-07-18 20:35:56 UTC; mri5365
+Packaged: 2018-03-12 01:52:22 UTC; mri5365
 Author: Eric Polley [aut, cre],
   Erin LeDell [aut],
   Chris Kennedy [aut],
   Sam Lendle [ctb],
   Mark van der Laan [aut, ths]
 Repository: CRAN
-Date/Publication: 2017-07-18 22:39:09 UTC
+Date/Publication: 2018-03-12 19:18:08 UTC

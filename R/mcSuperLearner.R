@@ -47,6 +47,10 @@ mcSuperLearner <- function(Y, X, newX = NULL, family = gaussian(), SL.library,
 	Z <- matrix(NA, N, k)
 	libraryNames <- paste(library$library$predAlgorithm, library$screenAlgorithm[library$library$rowScreen], sep="_")
 
+  if(p < 2 & !identical(library$screenAlgorithm, "All")) {
+    warning('Screening algorithms specified in combination with single-column X.')
+  }
+
 	# put fitLibrary in it's own environment to locate later
 	fitLibEnv <- new.env()
 	assign('fitLibrary', vector('list', length = k), envir = fitLibEnv)
@@ -194,7 +198,8 @@ mcSuperLearner <- function(Y, X, newX = NULL, family = gaussian(), SL.library,
   }
 
   time_predict = system.time({
-    whichScreen <- t(sapply(library$screenAlgorithm, FUN = .screenFun, list = list(Y = Y, X = X, family = family, id = id, obsWeights = obsWeights)))
+    whichScreen <- sapply(library$screenAlgorithm, FUN = .screenFun, list = list(Y = Y, X = X, family = family, id = id, obsWeights = obsWeights), simplify = FALSE)
+    whichScreen <- do.call(rbind, whichScreen)
 
     # change to sapply?
     # for(s in 1:k) {
