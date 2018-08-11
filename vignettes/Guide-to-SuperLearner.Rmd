@@ -287,7 +287,7 @@ Looks like our new RF is not improving performance. This implies that the origin
 
 For comparison we can do the same hyperparameter customization with `create.Learner()`.
 
-```{r rf-create-learner}
+```{r rf-create-learner, eval=F}
 # Customize the defaults for randomForest.
 learners = create.Learner("SL.randomForest", params = list(ntree = 3000))
 
@@ -322,7 +322,7 @@ For randomForest there are two particularly important hyperparameters: mtry and 
 
 Let's try 3 different mtry options.
 
-```{r rf-mtry}
+```{r rf-mtry, eval=F}
 # sqrt(p) is the default value of mtry for classification.
 floor(sqrt(ncol(X_train)))
 
@@ -364,7 +364,7 @@ SuperLearner makes it easy to use multiple CPU cores on your computer to speed u
 There are two ways to use multiple cores in R: the "multicore" system and the "snow" system. Windows only supports the "snow" system, which is more difficult to use, whereas macOS and Linux can use either one.
 
 First we show the "multicore" system version:
-```{r multicore-cvsl}
+```{r multicore-cvsl, eval=F}
 # Setup parallel computation - use all cores on our computer.
 num_cores = RhpcBLASctl::get_num_cores()
 
@@ -396,7 +396,7 @@ summary(cv_sl)
 
 Here is the "snow" equivalent:
 
-```{r snow-cvsl}
+```{r snow-cvsl, eval=F}
 # Make a snow cluster
 # Again, replace 2 with num_cores to use all available cores.
 cluster = parallel::makeCluster(2)
@@ -434,7 +434,7 @@ If we want to use multiple cores for normal SuperLearner, not CV.SuperLearner (i
 
 First the "multicore" version (won't be parallel on Windows):
 
-```{r mcSuperLearner}
+```{r mcSuperLearner, eval=F}
 # Set multicore compatible seed.
 set.seed(1, "L'Ecuyer-CMRG")
 
@@ -449,7 +449,7 @@ sl$times$everything
 
 Now the "snow" version, which should be parallel on all operating systems.
 
-```{r snowSuperLearner}
+```{r snowSuperLearner, eval=F}
 # Make a snow cluster
 # Reminder: change "2" to "num_cores" (without quotes) to use all available cores.
 cluster = parallel::makeCluster(2)
@@ -487,7 +487,7 @@ The weights or coefficients of the SuperLearner are stochastic - they will chang
 
 We can write a little function to extract the weights at each CV.SuperLearner iteration and summarize the distribution of those weights. This may be added to the SuperLearner package sometime in the future.
 
-```{r review-weights}
+```{r review-weights, eval=F}
 # Review meta-weights (coefficients) from a CV.SuperLearner object
 review_weights = function(cv_sl) {
   meta_weights = coef(cv_sl)
@@ -513,7 +513,7 @@ We recommend reviewing the weight distribution for any SuperLearner project to b
 When datasets have many covariates our algorithms may benefit from first choosing a subset of available covariates, a step called **feature selection**. Then we pass only those variables to the modeling algorithm, and it may be less likely to overfit to variables that are not related to the outcome.
 
 Let's revisit `listWrappers()` and check out the bottom section.
-```{r feature-selection}
+```{r feature-selection, eval=F}
 listWrappers()
 
 # Review code for corP, which is based on univariate correlation.
@@ -536,7 +536,7 @@ We see a small performance boost by first screening by univarate correlation wit
 
 For binary prediction we are typically trying to maximize AUC, which can be the best performance metric when our outcome variable has some imbalance. In other words, we don't have exactly 50% 1s and 50% 0s in our outcome. Our SuperLearner is not targeting AUC by default, but it can if we tell it to by specifying our method.
 
-```{r auc, cache=F}
+```{r auc, cache=F, eval=F}
 set.seed(1)
 
 # We use V = 3 to save computation time; for a real analysis use V = 10 or 20.
@@ -555,7 +555,7 @@ Another important optimizer to consider is negative log likelihood, which is int
 
 XGBoost is a version of GBM that is even faster and has some extra settings. GBM's adaptivity is determined by its configuration, so we want to thoroughly test a wide range of configurations for any given problem. Let's do 36 now. This will take a good amount of time (~7 minutes on my computer) so we need to at least use multiple cores, if not multiple computers.
 
-```{r xgboost, cache=F}
+```{r xgboost, cache=F, eval=F}
 # 3 * 4 * 3 = 36 different configurations.
 tune = list(ntrees = c(100, 200, 500),
             max_depth = 1:4,
@@ -592,7 +592,7 @@ We can see how stochastic the weights are for each individual execution of Super
 
 Finally, plot the performance for the different settings.
 
-```{r xgb-plot, fig.width=5, fig.height=8}
+```{r xgb-plot, fig.width=5, fig.height=8, eval=F}
 plot(cv_sl) + theme_bw()
 ```
 

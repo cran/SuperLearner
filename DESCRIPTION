@@ -1,8 +1,8 @@
 Package: SuperLearner
 Type: Package
 Title: Super Learner Prediction
-Version: 2.0-23
-Date: 2018-03-09
+Version: 2.0-24
+Date: 2018-08-10
 Authors@R: c(person("Eric", "Polley", email = "polley.eric@mayo.edu", role = c("aut", "cre")), person("Erin", "LeDell", role = c("aut")), person("Chris", "Kennedy", role = c("aut")), person("Sam", "Lendle", role = c("ctb")), person("Mark", "van der Laan", role = c("aut", "ths")))
 Maintainer: Eric Polley <polley.eric@mayo.edu>
 Description: Implements the super learner prediction method and contains a
@@ -22,11 +22,11 @@ LazyLoad: yes
 VignetteBuilder: knitr
 RoxygenNote: 6.0.1
 NeedsCompilation: no
-Packaged: 2018-03-12 01:52:22 UTC; mri5365
+Packaged: 2018-08-10 17:54:54 UTC; mri5365
 Author: Eric Polley [aut, cre],
   Erin LeDell [aut],
   Chris Kennedy [aut],
   Sam Lendle [ctb],
   Mark van der Laan [aut, ths]
 Repository: CRAN
-Date/Publication: 2018-03-12 19:18:08 UTC
+Date/Publication: 2018-08-11 05:30:03 UTC
