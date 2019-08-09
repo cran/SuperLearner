@@ -5,7 +5,7 @@
 
 # .SL.require() extends the require() function to add my own error messages
 .SL.require <- function(package, message = paste('loading required package (', package, ') failed', sep = '')) {
-  if(!require(package, character.only = TRUE)) {
+  if(!requireNamespace(package, quietly = FALSE)) {
     stop(message, call. = FALSE)
   }
   invisible(TRUE)
@@ -54,27 +54,28 @@
 # sapply(addPackages, function(x) require(force(x), character.only = TRUE))
 
 .check.SL.library <- function(library, addPackages = NULL) {
-	if("SL.bayesglm" %in% library) .SL.require('arm', message = 'You have selected bayesglm as a library algorithm but either do not have the arm package installed or it can not be loaded')
-	if("SL.cforest" %in% library) .SL.require('party', message = 'You have selected cforest as a library algorithm but either do not have the party package installed or it can not be loaded')
-	if("SL.DSA" %in% library) .SL.require('DSA', message = 'You have selected DSA as a library algorithm but either do not have the DSA package installed or it can not be loaded')
-	if("SL.gam" %in% library) .SL.require('gam', message = 'You have selected gam as a library algorithm but either do not have the gam package installed or it can not be loaded')
-	if("SL.gbm" %in% library) .SL.require('gbm', message = 'You have selected gbm as a library algorithm but either do not have the gbm package installed or it can not be loaded')
-	if("SL.glmnet" %in% library)	.SL.require('glmnet', message = 'You have selected glmnet as a library algorithm but either do not have the glmnet package installed or it can not be loaded')
-	if("SL.knn" %in% library) .SL.require('class', message = 'You have selected knn as a library algorithm but either do not have the class package installed or it can not be loaded')
-	if("SL.logreg" %in% library) .SL.require('LogicReg', message = 'You have selected logreg as a library algorithm but either do not have the LogicReg package installed or it can not be loaded')
-	if("SL.nnet" %in% library) .SL.require('nnet', message = 'You have selected nnet as a library algorithm but either do not have the nnet package installed or it can not be loaded')
-	if("SL.polymars" %in% library) .SL.require('polspline', message = 'You have selected polymars or polyclass as a library algorithm but either do not have the polspline package installed or it can not be loaded')
-	if("SL.randomForest" %in% library) .SL.require('randomForest', message = 'You have selected randomForest as a library algorithm but either do not have the randomForest package installed or it can not be loaded')
-	if("SL.ridge" %in% library) .SL.require('MASS', message = 'You have selected lm.ridge as a library algorithm but either do not have the MASS package installed or it can not be loaded')
-	if("SL.spls" %in% library) .SL.require('spls', message = 'You have selected spls as a library algorithm but either do not have the spls package installed or it can not be loaded')
-	if("SL.svm" %in% library) .SL.require('e1071', message = 'You have selected svm as a library algorithm but either do not have the e1071 package installed or it can not be loaded')
-	if("SL.ipredbagg" %in% library) .SL.require('ipred', message = 'You have selected bagging as a library algorithm but either do not have the ipred package installed or it can not be loaded')
-	if("SL.gbm" %in% library) .SL.require('gbm', message = 'You have selected gbm as a library algorithm but either do not have the gbm package installed or it can not be loaded')
-	if("SL.mars" %in% library) .SL.require('mda', message = 'You have selected mars as a library algorithm but either do not have the mda package installed or it can not be loaded')
-	if("SL.earth" %in% library) .SL.require('earth', message = 'You have selected earth as a library algorithm but either do not have the earth package installed or it can not be loaded')
-	if("SL.caret" %in% library) .SL.require('caret', message = 'You have selected caret as a library algorithm but either do not have the caret package installed or it can not be loaded')
-	if(!is.null(addPackages)) {
-	  sapply(addPackages, function(x) require(force(x), character.only = TRUE))
-	}
+	if("SL.bayesglm" %in% library) .SL.require("arm", message = 'You have selected bayesglm as a library algorithm but either do not have the arm package installed or it can not be loaded')
+	if("SL.cforest" %in% library) .SL.require("party", message = 'You have selected cforest as a library algorithm but either do not have the party package installed or it can not be loaded')
+	if("SL.DSA" %in% library) .SL.require("DSA", message = 'You have selected DSA as a library algorithm but either do not have the DSA package installed or it can not be loaded')
+	if("SL.gam" %in% library) .SL.require("gam", message = 'You have selected gam as a library algorithm but either do not have the gam package installed or it can not be loaded')
+	if("SL.gbm" %in% library) .SL.require("gbm", message = 'You have selected gbm as a library algorithm but either do not have the gbm package installed or it can not be loaded')
+	if("SL.glmnet" %in% library) .SL.require("glmnet", message = 'You have selected glmnet as a library algorithm but either do not have the glmnet package installed or it can not be loaded')
+	if("SL.knn" %in% library) .SL.require("class", message = 'You have selected knn as a library algorithm but either do not have the class package installed or it can not be loaded')
+	if("SL.logreg" %in% library) .SL.require("LogicReg", message = 'You have selected logreg as a library algorithm but either do not have the LogicReg package installed or it can not be loaded')
+	if("SL.nnet" %in% library) .SL.require("nnet", message = 'You have selected nnet as a library algorithm but either do not have the nnet package installed or it can not be loaded')
+	if("SL.polymars" %in% library) .SL.require("polspline", message = 'You have selected polymars or polyclass as a library algorithm but either do not have the polspline package installed or it can not be loaded')
+	if("SL.randomForest" %in% library) .SL.require("randomForest", message = 'You have selected randomForest as a library algorithm but either do not have the randomForest package installed or it can not be loaded')
+	if("SL.ridge" %in% library) .SL.require("MASS", message = 'You have selected lm.ridge as a library algorithm but either do not have the MASS package installed or it can not be loaded')
+	if("SL.spls" %in% library) .SL.require("spls", message = 'You have selected spls as a library algorithm but either do not have the spls package installed or it can not be loaded')
+	if("SL.svm" %in% library) .SL.require("e1071", message = 'You have selected svm as a library algorithm but either do not have the e1071 package installed or it can not be loaded')
+	if("SL.ipredbagg" %in% library) .SL.require("ipred", message = 'You have selected bagging as a library algorithm but either do not have the ipred package installed or it can not be loaded')
+	if("SL.gbm" %in% library) .SL.require("gbm", message = 'You have selected gbm as a library algorithm but either do not have the gbm package installed or it can not be loaded')
+	if("SL.mars" %in% library) .SL.require("mda", message = 'You have selected mars as a library algorithm but either do not have the mda package installed or it can not be loaded')
+	if("SL.earth" %in% library) .SL.require("earth", message = 'You have selected earth as a library algorithm but either do not have the earth package installed or it can not be loaded')
+	if("SL.caret" %in% library) .SL.require("caret", message = 'You have selected caret as a library algorithm but either do not have the caret package installed or it can not be loaded')
+#	#removing this check, need to replace with requireNamespace per writing R extensions 1.1.3.1
+#	if(!is.null(addPackages)) {
+#	  sapply(addPackages, function(x) require(force(x), character.only = TRUE))
+#	}
 	invisible(TRUE)
 }

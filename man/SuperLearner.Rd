@@ -91,6 +91,10 @@ Returns the \code{family} value from above
   \item{fitLibrary}{
 A list with the fitted objects for each algorithm in \code{SL.library} on the full training data set.
 }
+  \item{cvFitLibrary}{
+A list with fitted objects for each algorithm in \code{SL.library} on each of 
+\code{V} different training data sets. 
+}
   \item{varNames}{
 A character vector with the names of the variables in \code{X}.
 }
@@ -264,6 +268,8 @@ testMC
 library(parallel)
 cl <- makeCluster(2, type = "PSOCK") # can use different types here
 clusterSetRNGStream(cl, iseed = 2343)
+# make SL functions available on the clusters, use assignment to avoid printing
+foo <- clusterEvalQ(cl, library(SuperLearner))  
 testSNOW <- snowSuperLearner(cluster = cl, Y = Y, X = X, newX = newX,
   SL.library = SL.library, method = "method.NNLS")
 testSNOW
@@ -279,6 +285,8 @@ environment(my.SL.wrapper) <-asNamespace("SuperLearner")
 
 cl <- makeCluster(2, type = "PSOCK") # can use different types here
 clusterSetRNGStream(cl, iseed = 2343)
+# make SL functions available on the clusters, use assignment to avoid printing
+foo <- clusterEvalQ(cl, library(SuperLearner))  
 clusterExport(cl, c("my.SL.wrapper"))  # copy the function to all clusters
 testSNOW <- snowSuperLearner(cluster = cl, Y = Y, X = X, newX = newX,
   SL.library = c("SL.glm", "SL.mean", "my.SL.wrapper"), method = "method.NNLS")
@@ -293,6 +301,8 @@ replicate(5, system.time(mcSuperLearner(Y = Y, X = X, newX = newX,
   SL.library = SL.library, method = "method.NNLS")))
 
 cl <- makeCluster(2, type = 'PSOCK')
+# make SL functions available on the clusters, use assignment to avoid printing
+foo <- clusterEvalQ(cl, library(SuperLearner))  
 replicate(5, system.time(snowSuperLearner(cl, Y = Y, X = X, newX = newX,
   SL.library = SL.library, method = "method.NNLS")))
 stopCluster(cl)

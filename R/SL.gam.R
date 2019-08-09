@@ -10,9 +10,9 @@ SL.gam <- function(Y, X, newX, family, obsWeights, deg.gam = 2, cts.num = 4, ...
   # create the formula for gam with a spline for each continuous variable
   cts.x <- apply(X, 2, function(x) (length(unique(x)) > cts.num))
   if (sum(!cts.x) > 0) { 
-    gam.model <- as.formula(paste("Y~", paste(paste("s(", colnames(X[, cts.x, drop = FALSE]), ",", deg.gam,")", sep=""), collapse = "+"), "+", paste(colnames(X[, !cts.x, drop=FALSE]), collapse = "+")))
+    gam.model <- as.formula(paste("Y~", paste(paste("gam::s(", colnames(X[, cts.x, drop = FALSE]), ",", deg.gam,")", sep=""), collapse = "+"), "+", paste(colnames(X[, !cts.x, drop=FALSE]), collapse = "+")))
   } else {
-    gam.model <- as.formula(paste("Y~", paste(paste("s(", colnames(X[, cts.x, drop = FALSE]), ",", deg.gam, ")", sep=""), collapse = "+")))
+    gam.model <- as.formula(paste("Y~", paste(paste("gam::s(", colnames(X[, cts.x, drop = FALSE]), ",", deg.gam, ")", sep=""), collapse = "+")))
   }
   # fix for when all variables are binomial
   if (sum(!cts.x) == length(cts.x)) {
