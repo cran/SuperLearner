@@ -37,7 +37,6 @@
 #'
 #' @examples
 #'
-#' if(requireNamespace('biglasso')) {
 #' data(Boston, package = "MASS")
 #' Y = Boston$medv
 #' # Remove outcome from covariate dataframe.
@@ -56,8 +55,6 @@
 #'
 #' pred = predict(sl, X)
 #' summary(pred$pred)
-#'
-#' }
 #'
 #' @references
 #'
@@ -82,7 +79,7 @@ SL.biglasso <-
            nfolds = 5,
            ...) {
   .SL.require("biglasso")
-  .SL.require('bigmemory')
+  .SL.require("bigmemory")  
 
   # If binomial, biglasso still wants Y to be a numeric.
 

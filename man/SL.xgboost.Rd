@@ -61,6 +61,6 @@ create.SL.xgboost and allow the SuperLearner to choose the best weights based
 on cross-validated performance.
 
 If you run into errors please first try installing the latest version of
-XGBoost as described here:
+XGBoost from drat as described here:
 \url{https://xgboost.readthedocs.io/en/latest/build.html}
 }

@@ -1,6 +1,11 @@
 # News for the SuperLearner package. #
 
 ---
+Version: 2.0-26
+Date: 2019-08-12
+* Added obsWeights and id arguments to the test-glmnet.R file, line 24
+
+---
 Version: 2.0-25
 Date: 2019-08-05
 * Updated listWrappers() to allow search results without SuperLearner loaded
@@ -12,6 +17,7 @@ Date: 2019-08-05
 * Removed the SuperLearnerPresent.Rnw file, was a shortcut to create the SuperLearnerR vignette
 * Changed .SL.require to use 'requireNamespace()' instead of 'require()'
 * added '.SL.require("bibmemory")' to 'SL.biglasso.R'
+* allowed SL.gam to use s() instead of gam::s() and 'require' instead of 'requireNamespace`
 
 ---
 Version: 2.0-24

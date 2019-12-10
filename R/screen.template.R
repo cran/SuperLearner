@@ -6,7 +6,7 @@ All <- function(X, ...) {
 # screen functions must return a logical vector of length ncol(X)
 screen.template <- function (Y, X, family, obsWeights, id, ...) 
 {
-  # library'pkg')
+  # library('pkg')
   if (family$family == "gaussian") {
 	
   }

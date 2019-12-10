@@ -1,4 +1,4 @@
-if(require("testthat")) {
-	library("SuperLearner")
-	test_check("SuperLearner")	
-}
+library(testthat)
+library(SuperLearner)
+
+test_check("SuperLearner")
