@@ -79,7 +79,7 @@ List with predictions and the original training data &
 Wrapper for Kernlab's support vector machine algorithm.
 }
 \examples{
-
+\dontrun{
 data(Boston, package = "MASS")
 Y = Boston$medv
 # Remove outcome from covariate dataframe.
@@ -93,11 +93,12 @@ sl
 
 pred = predict(sl, X)
 summary(pred$pred)
+}
 
 }
 \references{
 Hsu, C. W., Chang, C. C., & Lin, C. J. (2016). A practical guide to support
-vector classification. \url{http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf}
+vector classification. \url{https://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf}
 
 Scholkopf, B., & Smola, A. J. (2001). Learning with kernels: support vector
 machines, regularization, optimization, and beyond. MIT press.

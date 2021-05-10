@@ -130,7 +130,7 @@ A logical vector indicating if any algorithms experienced an error on the full d
 \references{
 	van der Laan, M. J., Polley, E. C. and Hubbard, A. E. (2008) Super Learner, \emph{Statistical Applications of Genetics and Molecular Biology}, \bold{6}, article 25.
 }
-\author{ Eric C Polley \email{polley.eric@mayo.edu} }
+\author{ Eric C Polley \email{epolley@uchicago.edu} }
 
 \examples{
 \dontrun{
@@ -174,7 +174,7 @@ X <- as.data.frame(X)
 Y <- rbinom(N, 1, plogis(.2*X[, 1] + .1*X[, 2] - .2*X[, 3] +
   .1*X[, 3]*X[, 4] - .2*abs(X[, 4])))
 
-SL.library <- c("SL.glmnet", "SL.glm", "SL.knn", "SL.gam", "SL.mean")
+SL.library <- c("SL.glmnet", "SL.glm", "SL.knn", "SL.mean")
 
 # least squares loss function
 test.NNLS <- SuperLearner(Y = Y, X = X, SL.library = SL.library,
@@ -257,7 +257,7 @@ newX <- data.frame(newX)
 newY <- newX[, 1] + sqrt(abs(newX[, 2] * newX[, 3])) + newX[, 2] - newX[, 3] + rnorm(m)
 
 # generate Library and run Super Learner
-SL.library <- c("SL.glm", "SL.randomForest", "SL.gam",
+SL.library <- c("SL.glm", "SL.randomForest", 
   "SL.polymars", "SL.mean")
 
 testMC <- mcSuperLearner(Y = Y, X = X, newX = newX, SL.library = SL.library,

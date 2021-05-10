@@ -6,7 +6,7 @@
 
 SL.gam <- function(Y, X, newX, family, obsWeights, deg.gam = 2, cts.num = 4, ...) {
 	# using require instead of requireNamespace() to allow the formula to parse correctly with s(), gam::s() doesn't work, is not recognized as a special function
-  if(!require('gam')) {stop("SL.gam requires the gam package, but it isn't available")} 
+  # if(!require('gam')) {stop("SL.gam requires the gam package, but it isn't available")} ## 2021-03-29: changed to DEPENDS:gam to avoid CRAN NOTE
   if("mgcv" %in% loadedNamespaces()) warning("mgcv and gam packages are both in use. You might see an error because both packages use the same function names.")
   # create the formula for gam with a spline for each continuous variable
   cts.x <- apply(X, 2, function(x) (length(unique(x)) > cts.num))
@@ -32,7 +32,7 @@ SL.gam <- function(Y, X, newX, family, obsWeights, deg.gam = 2, cts.num = 4, ...
 }
 
 predict.SL.gam <- function(object, newdata, ...){
-  .SL.require('gam')
+  # .SL.require('gam') ## 2021-03-29: changed to DEPENDS:gam to avoid CRAN NOTE
   if(packageVersion('gam') >= 1.15) {
     pred <- gam::predict.Gam(object = object$object, newdata = newdata, type = "response") # updated gam class in version 1.15
   } else {

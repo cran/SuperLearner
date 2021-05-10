@@ -1,18 +1,18 @@
-## ----eval=F--------------------------------------------------------------
+## ----eval=F-------------------------------------------------------------------
 #  install.packages("SuperLearner")
 
-## ----eval=F--------------------------------------------------------------
+## ----eval=F-------------------------------------------------------------------
 #  # Install remotes first:
 #  # install.packages("remotes")
 #  remotes::install_github("ecpolley/SuperLearner")
 
-## ----eval=F--------------------------------------------------------------
+## ----eval=F-------------------------------------------------------------------
 #  install.packages(c("caret", "glmnet", "randomForest", "ggplot2", "RhpcBLASctl"))
 
-## ----eval=F--------------------------------------------------------------
+## ----eval=F-------------------------------------------------------------------
 #  install.packages("xgboost", repos=c("http://dmlc.ml/drat/", getOption("repos")), type="source")
 
-## ----setup-data----------------------------------------------------------
+## ----setup-data---------------------------------------------------------------
 ############################
 # Setup example dataset.
 
@@ -62,7 +62,7 @@ y_holdout = outcome_bin[-train_obs]
 table(y_train, useNA = "ifany")
 
 
-## ------------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(SuperLearner)
 
 # Review available models.
@@ -71,7 +71,7 @@ listWrappers()
 # Peek at code for a model.
 SL.glmnet
 
-## ----indiv-models--------------------------------------------------------
+## ----indiv-models-------------------------------------------------------------
 # Set the seed for reproducibility.
 set.seed(1)
 
@@ -94,7 +94,7 @@ sl_rf = SuperLearner(Y = y_train, X = x_train, family = binomial(),
                      SL.library = "SL.ranger")
 sl_rf
 
-## ----multiple-models-----------------------------------------------------
+## ----multiple-models----------------------------------------------------------
 set.seed(1)
 sl = SuperLearner(Y = y_train, X = x_train, family = binomial(),
   SL.library = c("SL.mean", "SL.glmnet", "SL.ranger"))
@@ -103,7 +103,7 @@ sl
 # Review how long it took to run the SuperLearner:
 sl$times$everything
 
-## ----predict-------------------------------------------------------------
+## ----predict------------------------------------------------------------------
 # Predict back on the holdout dataset.
 # onlySL is set to TRUE so we don't fit algorithms that had weight = 0, saving computation.
 pred = predict(sl, x_holdout, onlySL = TRUE)
@@ -127,7 +127,7 @@ pred_rocr = ROCR::prediction(pred$pred, y_holdout)
 auc = ROCR::performance(pred_rocr, measure = "auc", x.measure = "cutoff")@y.values[[1]]
 auc
 
-## ----cv-sl, fig.width=5--------------------------------------------------
+## ----cv-sl, fig.width=5-------------------------------------------------------
 set.seed(1)
 
 # Don't have timing info for the CV.SuperLearner unfortunately.
@@ -137,7 +137,7 @@ system.time({
   # This will take about 2x as long as the previous SuperLearner.
   cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(),
                           # For a real analysis we would use V = 10.
-                          V = 3,
+                          cvControl = list(V = 2), innerCvControl = list(list(V=2)),
                           SL.library = c("SL.mean", "SL.glmnet", "SL.ranger"))
 })
 
@@ -152,10 +152,10 @@ table(simplify2array(cv_sl$whichDiscreteSL))
 plot(cv_sl) + theme_bw()
 
 # Save plot to a file.
-ggsave("SuperLearner.png")
+# ggsave("SuperLearner.png")
 
 
-## ----rf-custom, fig.width=5----------------------------------------------
+## ----rf-custom, fig.width=5---------------------------------------------------
 # Review the function argument defaults at the top.
 SL.ranger
 
@@ -170,13 +170,13 @@ set.seed(1)
 
 # Fit the CV.SuperLearner.
 # We use V = 3 to save computation time; for a real analysis use V = 10 or 20.
-cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(), V = 3,
+cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(), cvControl = list(V=3),
                         SL.library = c("SL.mean", "SL.glmnet", "SL.rf.better", "SL.ranger"))
 
 # Review results.
 summary(cv_sl)
 
-## ----rf-create-learner---------------------------------------------------
+## ----rf-create-learner--------------------------------------------------------
 # Customize the defaults for random forest.
 learners = create.Learner("SL.ranger", params = list(num.trees = 1000))
 
@@ -201,7 +201,7 @@ cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(),
 # Review results.
 summary(cv_sl)
 
-## ----rf-mtry-------------------------------------------------------------
+## ----rf-mtry------------------------------------------------------------------
 # sqrt(p) is the default value of mtry for classification.
 floor(sqrt(ncol(x_train)))
 
@@ -222,13 +222,13 @@ set.seed(1)
 
 # Fit the CV.SuperLearner.
 # We use V = 3 to save computation time; for a real analysis use V = 10 or 20.
-cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(), V = 3,
+cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(), cvControl = list(V = 3),
                         SL.library = c("SL.mean", "SL.glmnet", learners$names, "SL.ranger"))
 
 # Review results.
 summary(cv_sl)
 
-## ----multicore-cvsl------------------------------------------------------
+## ----multicore-cvsl-----------------------------------------------------------
 # Setup parallel computation - use all cores on our computer.
 (num_cores = RhpcBLASctl::get_num_cores())
 
@@ -248,7 +248,7 @@ set.seed(1, "L'Ecuyer-CMRG")
 system.time({
   cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(),
                           # For a real analysis we would use V = 10.
-                          V = 3,
+                          cvControl = list(V = 3),
                           parallel = "multicore",
                           SL.library = c("SL.mean", "SL.glmnet", learners$names, "SL.ranger"))
 })
@@ -256,53 +256,53 @@ system.time({
 # Review results.
 summary(cv_sl)
 
-## ----snow-cvsl-----------------------------------------------------------
-# Make a snow cluster
-# Again, replace 2 with num_cores to use all available cores.
-cluster = parallel::makeCluster(2)
+## ----snow-cvsl, eval = FALSE--------------------------------------------------
+#  # Make a snow cluster
+#  # Again, replace 2 with num_cores to use all available cores.
+#  cluster = parallel::makeCluster(2)
+#  
+#  # Check the cluster object.
+#  cluster
+#  
+#  # Load the SuperLearner package on all workers so they can find
+#  # SuperLearner::All(), the default screening function which keeps all variables.
+#  parallel::clusterEvalQ(cluster, library(SuperLearner))
+#  
+#  # We need to explictly export our custom learner functions to the workers.
+#  parallel::clusterExport(cluster, learners$names)
+#  
+#  # We need to set a different type of seed that works across cores.
+#  # This version is for SNOW parallelization.
+#  # Otherwise the other cores will go rogue and we won't get repeatable results.
+#  parallel::clusterSetRNGStream(cluster, 1)
+#  
+#  # While this is running check CPU using in Activity Monitor / Task Manager.
+#  system.time({
+#    cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(),
+#                            # For a real analysis we would use V = 10.
+#                            cvControl = list(V = 3),
+#                            parallel = cluster,
+#                            SL.library = c("SL.mean", "SL.glmnet", learners$names, "SL.ranger"))
+#  })
+#  
+#  # Review results.
+#  summary(cv_sl)
+#  
+#  # Stop the cluster workers now that we're done.
+#  parallel::stopCluster(cluster)
 
-# Check the cluster object.
-cluster
+## ----mcSuperLearner, eval = FALSE---------------------------------------------
+#  # Set multicore compatible seed.
+#  set.seed(1, "L'Ecuyer-CMRG")
+#  
+#  # Fit the SuperLearner.
+#  (sl = mcSuperLearner(Y = y_train, X = x_train, family = binomial(),
+#                      SL.library = c("SL.mean", "SL.glmnet", learners$names, "SL.ranger")))
+#  
+#  # We see the time is reduced over our initial single-core superlearner.
+#  sl$times$everything
 
-# Load the SuperLearner package on all workers so they can find
-# SuperLearner::All(), the default screening function which keeps all variables.
-parallel::clusterEvalQ(cluster, library(SuperLearner))
-
-# We need to explictly export our custom learner functions to the workers.
-parallel::clusterExport(cluster, learners$names)
-
-# We need to set a different type of seed that works across cores.
-# This version is for SNOW parallelization.
-# Otherwise the other cores will go rogue and we won't get repeatable results.
-parallel::clusterSetRNGStream(cluster, 1)
-
-# While this is running check CPU using in Activity Monitor / Task Manager.
-system.time({
-  cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(),
-                          # For a real analysis we would use V = 10.
-                          V = 3,
-                          parallel = cluster,
-                          SL.library = c("SL.mean", "SL.glmnet", learners$names, "SL.ranger"))
-})
-
-# Review results.
-summary(cv_sl)
-
-# Stop the cluster workers now that we're done.
-parallel::stopCluster(cluster)
-
-## ----mcSuperLearner------------------------------------------------------
-# Set multicore compatible seed.
-set.seed(1, "L'Ecuyer-CMRG")
-
-# Fit the SuperLearner.
-(sl = mcSuperLearner(Y = y_train, X = x_train, family = binomial(),
-                    SL.library = c("SL.mean", "SL.glmnet", learners$names, "SL.ranger")))
-
-# We see the time is reduced over our initial single-core superlearner.
-sl$times$everything
-
-## ----snowSuperLearner----------------------------------------------------
+## ----snowSuperLearner---------------------------------------------------------
 # Make a snow cluster
 # Reminder: change "2" to "num_cores" (without quotes) to use all available cores.
 (cluster = parallel::makeCluster(2))
@@ -327,7 +327,7 @@ parallel::clusterSetRNGStream(cluster, 1)
 # We see the time is reduced over our initial single-core superlearner.
 sl$times$everything
 
-## ----review-weights------------------------------------------------------
+## ----review-weights-----------------------------------------------------------
 # Review meta-weights (coefficients) from a CV.SuperLearner object
 review_weights = function(cv_sl) {
   meta_weights = coef(cv_sl)
@@ -343,7 +343,7 @@ review_weights = function(cv_sl) {
 
 print(review_weights(cv_sl), digits = 3)
 
-## ----feature-selection---------------------------------------------------
+## ----feature-selection--------------------------------------------------------
 listWrappers()
 
 # Review code for corP, which is based on univariate correlation.
@@ -355,34 +355,34 @@ set.seed(1)
 # We need to use list() instead of c().
 cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(),
                         # For a real analysis we would use V = 10.
-                        V = 3,
+                        cvControl = list(V = 3),
                         parallel = "multicore",
                         SL.library = list("SL.mean", "SL.glmnet", c("SL.glmnet", "screen.corP")))
 summary(cv_sl)
 
-## ----auc, cache=F--------------------------------------------------------
+## ----auc, cache=FALSE---------------------------------------------------------
 set.seed(1)
 
 cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(),
                         # For a real analysis we would use V = 10.
-                        V = 3,
+                        cvControl = list(V = 3),
                         method = "method.AUC",
                         SL.library = list("SL.mean", "SL.glmnet", c("SL.glmnet", "screen.corP")))
 summary(cv_sl)
 
 
-## ----xgboost, cache=F----------------------------------------------------
-# 3 * 3 * 3 = 27 different configurations.
+## ----xgboost, cache=FALSE-----------------------------------------------------
+# 2 * 2 * 2 = 8 different configurations.
 # For a real analysis we would do 100, 500, or 1000 trees - this is just a demo.
-tune = list(ntrees = c(10, 20, 50),
-            max_depth = 1:3,
-            shrinkage = c(0.001, 0.01, 0.1))
+tune = list(ntrees = c(10, 20),
+            max_depth = 1:2,
+            shrinkage = c(0.001, 0.01))
 
-# Set detailed names = T so we can see the configuration for each function.
+# Set detailed names = TRUE so we can see the configuration for each function.
 # Also shorten the name prefix.
 learners = create.Learner("SL.xgboost", tune = tune, detailed_names = TRUE, name_prefix = "xgb")
 
-# 27 configurations - not too shabby.
+# 8 configurations - not too shabby.
 length(learners$names)
 learners$names
 
@@ -396,7 +396,7 @@ set.seed(1, "L'Ecuyer-CMRG")
 system.time({
   cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(),
                           # For a real analysis we would use V = 10.
-                          V = 3,
+                          cvControl = list(V = 3),
                           parallel = "multicore",
                           SL.library = c("SL.mean", "SL.glmnet", learners$names, "SL.ranger"))
 })
@@ -405,6 +405,6 @@ system.time({
 summary(cv_sl)
 review_weights(cv_sl)
 
-## ----xgb-plot, fig.width=5, fig.height=8---------------------------------
+## ----xgb-plot, fig.width=5, fig.height=8--------------------------------------
 plot(cv_sl) + theme_bw()
 

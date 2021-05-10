@@ -112,7 +112,7 @@ A logical vector indicating if any algorithms experienced an error on the full d
 \references{ 
 	van der Laan, M. J., Polley, E. C. and Hubbard, A. E. (2008) Super Learner, \emph{Statistical Applications of Genetics and Molecular Biology}, \bold{6}, article 25.  
 }
-\author{ Eric C Polley \email{polley.eric@mayo.edu} }
+\author{Eric C Polley \email{epolley@uchicago.edu} }
 
 \examples{
 \dontrun{
@@ -156,7 +156,7 @@ X <- as.data.frame(X)
 Y <- rbinom(N, 1, plogis(.2*X[, 1] + .1*X[, 2] - .2*X[, 3] + 
   .1*X[, 3]*X[, 4] - .2*abs(X[, 4])))
 
-SL.library <- c("SL.glmnet", "SL.glm", "SL.knn", "SL.gam", "SL.mean")
+SL.library <- c("SL.glmnet", "SL.glm", "SL.knn", "SL.mean")
 
 # least squares loss function
 test.NNLS <- SampleSplitSuperLearner(Y = Y, X = X, SL.library = SL.library, 
