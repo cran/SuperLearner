@@ -1,4 +1,4 @@
-50a81f38fa22d84fce23689881db70e2 *DESCRIPTION
+ea7d0dc20789cb85b09c3abaa4bcdf37 *DESCRIPTION
 088bb102ea4f536c1bf674f6c3a58ffe *NAMESPACE
 d238a1219aa94c4f8b220304a5c48f57 *R/CV.SuperLearner.R
 4d6f56e7952386751e97b645bc4e0d27 *R/CVFolds.R
@@ -9,7 +9,7 @@ daddf9e4ac1025d344c8d2d8331880cc *R/SL.bayesglm.R
 363967e042625d2280582aaed69dfc58 *R/SL.cforest.R
 b6063aaf37ece4252c08e3939af90c18 *R/SL.earth.R
 4780b8e3abe587ce725de3e997ba424c *R/SL.extraTrees.R
-7f472fd02c7779ea42f9d85ed2443c22 *R/SL.gam.R
+b2037c4fc89a263e6e6625f89aae277f *R/SL.gam.R
 00f5591ac314a81160eecc056b62f567 *R/SL.gbm.R
 b234c762d9af47c03cdee9971f7c3821 *R/SL.glm.R
 ae68479cc08d57f102eea883ae79ea5f *R/SL.glmnet.R
@@ -37,7 +37,7 @@ f59a94bd423c00efdd3a5c35cf5364ad *R/SL.rpart.R
 8d99045a21072de13e8b5865d9edc595 *R/SL.step.R
 3b42c2fa2b8333d03b3925ccb9c4403e *R/SL.svm.R
 f26a8de6a22689c2d45bc5eb27abaf7f *R/SL.template.R
-5562623e28409c841660d103392cf458 *R/SL.xgboost.R
+d12dc401bab245ffc31944c3622e781b *R/SL.xgboost.R
 f4055aba492a4673fed65a6c4b97890e *R/SampleSplitSuperLearner.R
 c29c3dfbbda780cb875732ff39c8fad8 *R/SuperLearner.R
 ea246ce6b78f78f210b6bdad27f06085 *R/SuperLearnerNews.R
