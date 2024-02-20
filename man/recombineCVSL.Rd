@@ -97,7 +97,7 @@ X <- as.data.frame(X)
 Y <- rbinom(N, 1, plogis(.2*X[, 1] + .1*X[, 2] - .2*X[, 3] + 
   .1*X[, 3]*X[, 4] - .2*abs(X[, 4])))
 
-SL.library <- c("SL.glmnet", "SL.glm", "SL.knn", "SL.mean")
+SL.library <- c("SL.glmnet", "SL.glm", "SL.knn", "SL.gam", "SL.mean")
 
 # least squares loss function
 set.seed(1) # for reproducibility

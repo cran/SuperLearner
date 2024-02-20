@@ -19,7 +19,7 @@
 #' @param beta Power hyperparameter in tree prior for whether a node is
 #'   nonterminal or not.
 #' @param k For regression, k determines the prior probability that E(Y|X) is
-#'   contained in the interval (y_{min}, y_{max}), based on a normal
+#'   contained in the interval (y_min, y_max), based on a normal
 #'   distribution. For example, when k=2, the prior probability is 95\%. For
 #'   classification, k determines the prior probability that E(Y|X) is between
 #'   (-3,3). Note that a larger value of k results in more shrinkage and a more

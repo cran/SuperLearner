@@ -65,7 +65,7 @@ A function. The arguments are: \code{predY}, \code{coef}, \code{control}. The va
 }
 }
 
-\author{Eric C Polley \email{epolley@uchicago.edu} }
+\author{ Eric C Polley \email{Polley.Eric@mayo.edu} }
 \seealso{
 \code{\link{SuperLearner}}
 }

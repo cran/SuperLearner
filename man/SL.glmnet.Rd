@@ -49,7 +49,6 @@ See \code{vignette("glmnet_beta", package = "glmnet")} for a nice tutorial on
 glmnet.
 }
 \examples{
-\dontrun{
 
 # Load a test dataset.
 data(PimaIndiansDiabetes2, package = "mlbench")
@@ -67,7 +66,6 @@ sl = SuperLearner(Y, X, family = binomial(),
                   SL.library = c("SL.mean", "SL.glm", "SL.glmnet"))
 sl
 
-}
 }
 \references{
 Friedman, J., Hastie, T., & Tibshirani, R. (2010). Regularization paths for

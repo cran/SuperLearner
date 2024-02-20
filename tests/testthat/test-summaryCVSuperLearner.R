@@ -35,11 +35,11 @@ cv_sl = CV.SuperLearner(Y = Y, X = X, family = binomial(),
 summary(cv_sl)
 
 # Specify method.
-#cv_sl = CV.SuperLearner(Y = Y, X = X, family = binomial(),
-#                        cvControl = list(V = 2),
-#                        SL.library = sl_lib,
-#                        method = "method.AUC")
-#summary(cv_sl)
+cv_sl = CV.SuperLearner(Y = Y, X = X, family = binomial(),
+                        cvControl = list(V = 2),
+                        SL.library = sl_lib,
+                        method = "method.AUC")
+summary(cv_sl)
 
 # Specify method using a variable.
 method = "method.NNLS2"

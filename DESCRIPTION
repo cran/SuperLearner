@@ -1,8 +1,8 @@
 Package: SuperLearner
 Type: Package
 Title: Super Learner Prediction
-Version: 2.0-28.1
-Date: 2021-05-04
+Version: 2.0-29
+Date: 2024-02-06
 Authors@R: c(person("Eric", "Polley", email = "epolley@uchicago.edu", role = c("aut", "cre")), person("Erin", "LeDell", role = c("aut")), person("Chris", "Kennedy", role = c("aut")), person("Sam", "Lendle", role = c("ctb")), person("Mark", "van der Laan", role = c("aut", "ths")))
 Maintainer: Eric Polley <epolley@uchicago.edu>
 Description: Implements the super learner prediction method and contains a
@@ -10,22 +10,22 @@ Description: Implements the super learner prediction method and contains a
 License: GPL-3
 URL: https://github.com/ecpolley/SuperLearner
 Depends: R (>= 2.14.0), nnls, gam (>= 1.15)
-Imports: cvAUC
+Imports: cvAUC, methods
 Suggests: arm, bartMachine, biglasso, bigmemory, caret, class,
-        devtools, e1071, earth, extraTrees, gbm, genefilter, ggplot2,
-        glmnet, ipred, KernelKnn, kernlab, knitr, lattice, LogicReg,
-        MASS, mlbench, nloptr, nnet, party, polspline, prettydoc,
-        quadprog, randomForest, ranger, RhpcBLASctl, ROCR, rmarkdown,
-        rpart, SIS, speedglm, spls, sva, testthat, xgboost (>= 0.6)
+        devtools, e1071, earth, gbm, genefilter, ggplot2, glmnet,
+        ipred, KernelKnn, kernlab, knitr, lattice, LogicReg, MASS,
+        mlbench, nloptr, nnet, party, polspline, prettydoc, quadprog,
+        randomForest, ranger, RhpcBLASctl, ROCR, rmarkdown, rpart, SIS,
+        speedglm, spls, sva, testthat, xgboost (>= 0.6)
 LazyLoad: yes
 VignetteBuilder: knitr, rmarkdown
 RoxygenNote: 6.0.1
 NeedsCompilation: no
-Packaged: 2023-07-18 08:11:41 UTC; hornik
+Packaged: 2024-02-20 15:39:36 UTC; epolley
 Author: Eric Polley [aut, cre],
   Erin LeDell [aut],
   Chris Kennedy [aut],
   Sam Lendle [ctb],
   Mark van der Laan [aut, ths]
 Repository: CRAN
-Date/Publication: 2023-07-18 11:46:38 UTC
+Date/Publication: 2024-02-20 17:00:02 UTC

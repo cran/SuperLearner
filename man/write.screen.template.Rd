@@ -38,7 +38,7 @@ Explain structure of a screening algorithm here:
 }
 }
 
-\author{ Eric C Polley \email{epolley@uchicago.edu} }
+\author{ Eric C Polley \email{polley.eric@mayo.edu} }
 
 \seealso{
 \code{\link{SuperLearner}}

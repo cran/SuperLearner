@@ -79,7 +79,7 @@ List with predictions and the original training data &
 Wrapper for Kernlab's support vector machine algorithm.
 }
 \examples{
-\dontrun{
+
 data(Boston, package = "MASS")
 Y = Boston$medv
 # Remove outcome from covariate dataframe.
@@ -93,7 +93,6 @@ sl
 
 pred = predict(sl, X)
 summary(pred$pred)
-}
 
 }
 \references{

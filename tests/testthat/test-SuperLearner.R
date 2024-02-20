@@ -1,5 +1,5 @@
 library(SuperLearner)
-if(all(sapply(c("glmnet"), requireNamespace))) {
+if(all(sapply(c("randomForest", "glmnet"), requireNamespace))) {
 
 ########################
 # Simulate data
@@ -16,7 +16,7 @@ summary(Y)
 
 ########################
 # Run the SuperLearner
-models = c("SL.glmnet", "SL.glm", "SL.mean")
+models = c("SL.randomForest", "SL.glmnet", "SL.glm", "SL.mean")
 cv_control = SuperLearner.CV.control(V = 2L)
 sl = SuperLearner(Y, X, SL.library = models, cvControl = cv_control)
 sl

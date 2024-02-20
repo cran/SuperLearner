@@ -59,16 +59,16 @@ sl
 ###########################
 # Test regression
 
-#set.seed(1)
-#N = 200
-#X = as.data.frame(matrix(rnorm(N*10), N, 10))
+set.seed(1)
+N = 200
+X = as.data.frame(matrix(rnorm(N*10), N, 10))
 
-#Y_reg <- .2*X[, 1] + .1*X[, 2] - .2*X[, 3] + .1*X[, 3]*X[, 4] - .2*abs(X[, 4]) + rnorm(N)
-#summary(Y_reg)
+Y_reg <- .2*X[, 1] + .1*X[, 2] - .2*X[, 3] + .1*X[, 3]*X[, 4] - .2*abs(X[, 4]) + rnorm(N)
+summary(Y_reg)
 
-#sl = SuperLearner(Y = Y_reg, X = X, SL.library = sl_lib,
-#                  cvControl = list(V = 2),
-#                  family = gaussian())
-#sl
+sl = SuperLearner(Y = Y_reg, X = X, SL.library = sl_lib,
+                  cvControl = list(V = 2),
+                  family = gaussian())
+sl
 
   }

@@ -232,7 +232,7 @@ system.time({
   # This will take about 2x as long as the previous SuperLearner.
   cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(),
                           # For a real analysis we would use V = 10.
-                          cvControl = list(V = 2), innerCvControl = list(list(V=2)),
+                          V = 3,
                           SL.library = c("SL.mean", "SL.glmnet", "SL.ranger"))
 })
 
@@ -247,7 +247,7 @@ table(simplify2array(cv_sl$whichDiscreteSL))
 plot(cv_sl) + theme_bw()
 
 # Save plot to a file.
-# ggsave("SuperLearner.png")
+ggsave("SuperLearner.png")
 
 ```
 We see two SuperLearner results: "Super Learner" and "Discrete SL". "Discrete SL" chooses the best single learner - in this case SL.glmnet (lasso). "Super Learner" takes a weighted average of the learners using the coefficients/weights that we examined earlier. In general "Super Learner" should perform a little better than "Discrete SL".
@@ -277,7 +277,7 @@ set.seed(1)
 
 # Fit the CV.SuperLearner.
 # We use V = 3 to save computation time; for a real analysis use V = 10 or 20.
-cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(), cvControl = list(V=3),
+cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(), V = 3,
                         SL.library = c("SL.mean", "SL.glmnet", "SL.rf.better", "SL.ranger"))
 
 # Review results.
@@ -345,7 +345,7 @@ set.seed(1)
 
 # Fit the CV.SuperLearner.
 # We use V = 3 to save computation time; for a real analysis use V = 10 or 20.
-cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(), cvControl = list(V = 3),
+cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(), V = 3,
                         SL.library = c("SL.mean", "SL.glmnet", learners$names, "SL.ranger"))
 
 # Review results.
@@ -385,7 +385,7 @@ set.seed(1, "L'Ecuyer-CMRG")
 system.time({
   cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(),
                           # For a real analysis we would use V = 10.
-                          cvControl = list(V = 3),
+                          V = 3,
                           parallel = "multicore",
                           SL.library = c("SL.mean", "SL.glmnet", learners$names, "SL.ranger"))
 })
@@ -396,7 +396,7 @@ summary(cv_sl)
 
 Here is the "snow" equivalent:
 
-```{r snow-cvsl, eval = FALSE}
+```{r snow-cvsl}
 # Make a snow cluster
 # Again, replace 2 with num_cores to use all available cores.
 cluster = parallel::makeCluster(2)
@@ -420,7 +420,7 @@ parallel::clusterSetRNGStream(cluster, 1)
 system.time({
   cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(),
                           # For a real analysis we would use V = 10.
-                          cvControl = list(V = 3),
+                          V = 3,
                           parallel = cluster,
                           SL.library = c("SL.mean", "SL.glmnet", learners$names, "SL.ranger"))
 })
@@ -436,7 +436,7 @@ If we want to use multiple cores for normal SuperLearner, not CV.SuperLearner (i
 
 First the "multicore" version (won't be parallel on Windows):
 
-```{r mcSuperLearner, eval = FALSE}
+```{r mcSuperLearner}
 # Set multicore compatible seed.
 set.seed(1, "L'Ecuyer-CMRG")
 
@@ -522,7 +522,7 @@ set.seed(1)
 # We need to use list() instead of c().
 cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(),
                         # For a real analysis we would use V = 10.
-                        cvControl = list(V = 3),
+                        V = 3,
                         parallel = "multicore",
                         SL.library = list("SL.mean", "SL.glmnet", c("SL.glmnet", "screen.corP")))
 summary(cv_sl)
@@ -534,12 +534,12 @@ We see a small performance boost by first screening by univarate correlation wit
 
 For binary prediction we are typically trying to maximize AUC, which can be the best performance metric when our outcome variable has some imbalance. In other words, we don't have exactly 50% 1s and 50% 0s in our outcome. Our SuperLearner is not targeting AUC by default, but it can if we tell it to by specifying our method.
 
-```{r auc, cache=FALSE}
+```{r auc, cache=F}
 set.seed(1)
 
 cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(),
                         # For a real analysis we would use V = 10.
-                        cvControl = list(V = 3),
+                        V = 3,
                         method = "method.AUC",
                         SL.library = list("SL.mean", "SL.glmnet", c("SL.glmnet", "screen.corP")))
 summary(cv_sl)
@@ -554,18 +554,18 @@ Another important optimizer to consider is negative log likelihood, which is int
 
 XGBoost is a version of GBM that is even faster and has some extra settings. GBM's adaptivity is determined by its configuration, so we want to thoroughly test a wide range of configurations for any given problem. Let's do 27 now. This will take a good amount of time (~7 minutes on my computer) so we need to at least use multiple cores, if not multiple computers.
 
-```{r xgboost, cache=FALSE}
-# 2 * 2 * 2 = 8 different configurations.
+```{r xgboost, cache=F}
+# 3 * 3 * 3 = 27 different configurations.
 # For a real analysis we would do 100, 500, or 1000 trees - this is just a demo.
-tune = list(ntrees = c(10, 20),
-            max_depth = 1:2,
-            shrinkage = c(0.001, 0.01))
+tune = list(ntrees = c(10, 20, 50),
+            max_depth = 1:3,
+            shrinkage = c(0.001, 0.01, 0.1))
 
-# Set detailed names = TRUE so we can see the configuration for each function.
+# Set detailed names = T so we can see the configuration for each function.
 # Also shorten the name prefix.
 learners = create.Learner("SL.xgboost", tune = tune, detailed_names = TRUE, name_prefix = "xgb")
 
-# 8 configurations - not too shabby.
+# 27 configurations - not too shabby.
 length(learners$names)
 learners$names
 
@@ -579,7 +579,7 @@ set.seed(1, "L'Ecuyer-CMRG")
 system.time({
   cv_sl = CV.SuperLearner(Y = y_train, X = x_train, family = binomial(),
                           # For a real analysis we would use V = 10.
-                          cvControl = list(V = 3),
+                          V = 3,
                           parallel = "multicore",
                           SL.library = c("SL.mean", "SL.glmnet", learners$names, "SL.ranger"))
 })

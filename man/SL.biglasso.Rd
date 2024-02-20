@@ -57,7 +57,7 @@ cluster created by the \code{parallel} package.}
 SL wrapper for biglasso
 }
 \examples{
-\dontrun{
+
 data(Boston, package = "MASS")
 Y = Boston$medv
 # Remove outcome from covariate dataframe.
@@ -74,12 +74,8 @@ sl = SuperLearner(Y[row_subset], X[row_subset, 1:2, drop = FALSE],
                   SL.library = "SL.biglasso")
 sl
 
-
-	# example for predictions on the full dataset
-	pred = predict(sl, X)
-	summary(pred$pred)
-}
-
+pred = predict(sl, X)
+summary(pred$pred)
 
 }
 \references{

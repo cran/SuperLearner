@@ -96,70 +96,70 @@ print(sl)
 ############
 
 # Create a new environment to start this test from scratch.
-# sl_env = new.env()
+sl_env = new.env()
 
 # Test with detailed_names = F.
-# create_rf = create.Learner("SL.randomForest", tune = tune_rf, detailed_names = F,
-#                           env = sl_env)
-#print(create_rf)
-#print(ls(sl_env))
+create_rf = create.Learner("SL.randomForest", tune = tune_rf, detailed_names = F,
+                           env = sl_env)
+print(create_rf)
+print(ls(sl_env))
 
-#sl = SuperLearner(Y = Y, X = X, SL.library = create_rf$names, family = binomial(),
-#                  cvControl = list(V = 2),
-#                  env = sl_env)
-#print(sl)
+sl = SuperLearner(Y = Y, X = X, SL.library = create_rf$names, family = binomial(),
+                  cvControl = list(V = 2),
+                  env = sl_env)
+print(sl)
 
 ############
 
 # Create a new environment to start this test from scratch.
-#sl_env = new.env()
+sl_env = new.env()
 
 # Test another version where we specify NULL as a string so that its incorporated into names.
-#tune_rf = list(mtry = c(1, 2), nodesize = "NULL", maxnodes = "NULL")
-#create_rf = create.Learner("SL.randomForest", tune = tune_rf, detailed_names = T,
-#                           env = sl_env)
-#print(create_rf)
-#print(ls(sl_env))
+tune_rf = list(mtry = c(1, 2), nodesize = "NULL", maxnodes = "NULL")
+create_rf = create.Learner("SL.randomForest", tune = tune_rf, detailed_names = T,
+                           env = sl_env)
+print(create_rf)
+print(ls(sl_env))
 
-#sl = SuperLearner(Y = Y, X = X, SL.library = create_rf$names, family = binomial(),
-#                  cvControl = list(V = 2),
-#                  env = sl_env)
-#print(sl)
+sl = SuperLearner(Y = Y, X = X, SL.library = create_rf$names, family = binomial(),
+                  cvControl = list(V = 2),
+                  env = sl_env)
+print(sl)
 
 
 
 ############
 
 # Create a new environment to start this test from scratch.
-#sl_env = new.env()
+sl_env = new.env()
 
 # Test maxnode specification, including one version that uses the default.
 # We specify maxnodes using a list rather than vector so that 5 and 10 are not
 # coerced into strings.
-#tune_rf = list(mtry = c(1, 2), maxnodes = list(5, 10, "NULL"))
-#create_rf = create.Learner("SL.randomForest", tune = tune_rf, detailed_names = T,
-#                           env = sl_env)
-#print(create_rf)
+tune_rf = list(mtry = c(1, 2), maxnodes = list(5, 10, "NULL"))
+create_rf = create.Learner("SL.randomForest", tune = tune_rf, detailed_names = T,
+                           env = sl_env)
+print(create_rf)
 
-#sl = SuperLearner(Y = Y, X = X, SL.library = create_rf$names,
-#                  family = binomial(),
-#                  cvControl = list(V = 2),
-#                  env = sl_env)
-#print(sl)
+sl = SuperLearner(Y = Y, X = X, SL.library = create_rf$names,
+                  family = binomial(),
+                  cvControl = list(V = 2),
+                  env = sl_env)
+print(sl)
 
 # We need to use <<- in order for the sl result to be saved in our parent frame (GlobalEnv)
-#with(sl_env, {
-#  sl <<- SuperLearner(Y = Y, X = X, SL.library = create_rf$names,
-#                      cvControl = list(V = 2),
-#                      family = binomial())
-#})
-#print(sl)
+with(sl_env, {
+  sl <<- SuperLearner(Y = Y, X = X, SL.library = create_rf$names,
+                      cvControl = list(V = 2),
+                      family = binomial())
+})
+print(sl)
 
 # Or we can do this.
-#sl = with(sl_env, SuperLearner(Y = Y, X = X, SL.library = create_rf$names,
-#                               cvControl = list(V = 2),
-#                               family = binomial()))
-#print(sl)
+sl = with(sl_env, SuperLearner(Y = Y, X = X, SL.library = create_rf$names,
+                               cvControl = list(V = 2),
+                               family = binomial()))
+print(sl)
 
 
 ################
